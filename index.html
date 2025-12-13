@@ -1,101 +1,342 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Christmas Tree</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Star Tree</title>
     <style>
         body {
             margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+            background: radial-gradient(circle, #000, #000000);
             overflow: hidden;
-            background: black;
         }
+
         canvas {
             display: block;
         }
+
+        #snowflakeContainer {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+
+        .snowflake {
+            padding-left: 15px;
+            font-size: 14px;
+            line-height: 24px;
+            position: fixed;
+            color: #ebebeb;
+            user-select: none;
+            z-index: 1000;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        .snowflake:hover {
+            cursor: default
+        }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 
 <body>
-
-<!-- THREE.JS -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
-
-<script>
-    // =====================
-    // SCENE
-    // =====================
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-    );
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    camera.position.z = 15;
-
-    // =====================
-    // TREE
-    // =====================
-    const tree = new THREE.Group();
-
-    const material = new THREE.MeshStandardMaterial({ color: 0x0a7d2c });
-
-    for (let i = 0; i < 10; i++) {
-        const geometry = new THREE.ConeGeometry(5 - i * 0.4, 3, 32);
-        const cone = new THREE.Mesh(geometry, material);
-        cone.position.y = i * 1.5;
-        tree.add(cone);
-    }
-
-    scene.add(tree);
-
-    // =====================
-    // STAR
-    // =====================
-    const starGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-    const starMaterial = new THREE.MeshStandardMaterial({
-        color: 0xffd700,
-        emissive: 0xffd700
-    });
-    const star = new THREE.Mesh(starGeometry, starMaterial);
-    star.position.y = 15;
-    scene.add(star);
-
-    // =====================
-    // LIGHT
-    // =====================
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-    scene.add(ambientLight);
-
-    const pointLight = new THREE.PointLight(0xffffff, 1);
-    pointLight.position.set(10, 10, 10);
-    scene.add(pointLight);
-
-    // =====================
-    // ANIMATION
-    // =====================
-    function animate() {
-        requestAnimationFrame(animate);
-        tree.rotation.y += 0.003;
-        renderer.render(scene, camera);
-    }
-    animate();
-
-    // =====================
-    // RESIZE
-    // =====================
-    window.addEventListener("resize", () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
+    <div id='snowflakeContainer'>
+        <p class='snowflake'>❄</p>
+    </div>
+    <script style='text/javascript'>
+        //<![CDATA[
+        var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame; var transforms = ["transform", "msTransform", "webkitTransform", "mozTransform", "oTransform"]; var transformProperty = getSupportedPropertyName(transforms); var snowflakes = []; var browserWidth; var browserHeight; var numberOfSnowflakes = 50; var resetPosition = false; function setup() { window.addEventListener("DOMContentLoaded", generateSnowflakes, false); window.addEventListener("resize", setResetFlag, false) } setup(); function getSupportedPropertyName(b) { for (var a = 0; a < b.length; a++) { if (typeof document.body.style[b[a]] != "undefined") { return b[a] } } return null } function Snowflake(b, a, d, e, c) { this.element = b; this.radius = a; this.speed = d; this.xPos = e; this.yPos = c; this.counter = 0; this.sign = Math.random() < 0.5 ? 1 : -1; this.element.style.opacity = 0.5 + Math.random(); this.element.style.fontSize = 4 + Math.random() * 30 + "px" } Snowflake.prototype.update = function () { this.counter += this.speed / 5000; this.xPos += this.sign * this.speed * Math.cos(this.counter) / 40; this.yPos += Math.sin(this.counter) / 40 + this.speed / 30; setTranslate3DTransform(this.element, Math.round(this.xPos), Math.round(this.yPos)); if (this.yPos > browserHeight) { this.yPos = -50 } }; function setTranslate3DTransform(a, c, b) { var d = "translate3d(" + c + "px, " + b + "px, 0)"; a.style[transformProperty] = d } function generateSnowflakes() { var b = document.querySelector(".snowflake"); var h = b.parentNode; browserWidth = document.documentElement.clientWidth; browserHeight = document.documentElement.clientHeight; for (var d = 0; d < numberOfSnowflakes; d++) { var j = b.cloneNode(true); h.appendChild(j); var e = getPosition(50, browserWidth); var a = getPosition(50, browserHeight); var c = 5 + Math.random() * 40; var g = 4 + Math.random() * 10; var f = new Snowflake(j, g, c, e, a); snowflakes.push(f) } h.removeChild(b); moveSnowflakes() } function moveSnowflakes() { for (var b = 0; b < snowflakes.length; b++) { var a = snowflakes[b]; a.update() } if (resetPosition) { browserWidth = document.documentElement.clientWidth; browserHeight = document.documentElement.clientHeight; for (var b = 0; b < snowflakes.length; b++) { var a = snowflakes[b]; a.xPos = getPosition(50, browserWidth); a.yPos = getPosition(50, browserHeight) } resetPosition = false } requestAnimationFrame(moveSnowflakes) } function getPosition(b, a) { return Math.round(-1 * b + Math.random() * (a + 2 * b)) } function setResetFlag(a) { resetPosition = true };
+        //]]>
+    </script>
+    <script>
+        // Tạo scene, camera, và renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-</script>
+        document.body.appendChild(renderer.domElement);
 
+        // Tạo hình dạng ngôi sao
+        const starShape = new THREE.Shape();
+        const outerRadius = 1;
+        const innerRadius = 0.5;
+        const spikes = 5;
+
+        for (let i = 0; i < spikes * 2; i++) {
+            const angle = (i / (spikes * 2)) * Math.PI * 2;
+            const radius = i % 2 === 0 ? outerRadius : innerRadius;
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+
+            if (i === 0) {
+                starShape.moveTo(x, y);
+            } else {
+                starShape.lineTo(x, y);
+            }
+        }
+        starShape.closePath();
+
+        const extrudeSettings = { depth: 0.5, bevelEnabled: true, bevelThickness: 0.1, bevelSize: 0.1 };
+        const geometry = new THREE.ExtrudeGeometry(starShape, extrudeSettings);
+        const materialYellow = new THREE.MeshPhongMaterial({ color: 0xffff00, shininess: 100 });
+        const materialGreen = new THREE.MeshPhongMaterial({ color: 0x007700, shininess: 100 });
+
+        // Tạo ngôi sao trên cùng
+        const layers = 15;
+        const topStar = new THREE.Mesh(geometry, materialYellow);
+        topStar.scale.set(3, 3, 3);
+        topStar.position.set(0.2, layers * 2 + 3, 0.2);
+        scene.add(topStar);
+
+        // Tạo nhóm các ngôi sao dưới cây thông
+        const starsGroup = new THREE.Group();
+        const starsPerLayer = 40;
+
+        for (let layer = 0; layer < layers; layer++) {
+            const radius = 10 - layer * 0.6;
+            const y = layer * 2;
+            for (let i = 0; i < starsPerLayer; i++) {
+                const angle = (i / starsPerLayer) * Math.PI * 2;
+                const x = radius * Math.cos(angle);
+                const z = radius * Math.sin(angle);
+                const star = new THREE.Mesh(geometry, materialGreen.clone());
+                star.scale.set(0.6, 0.6, 0.6);
+                star.position.set(x, y, z);
+                starsGroup.add(star);
+            }
+        }
+        scene.add(starsGroup);
+
+        // Tạo vòng sao lấp đầy hình nón bên trong cây thông
+        const spiralStarsGroup = new THREE.Group();
+        const spiralStars = 1500; // Tăng số lượng sao lấp đầy hình nón
+        for (let i = 0; i < spiralStars; i++) {
+            const progress = Math.random(); // Tiến trình ngẫu nhiên từ 0 đến 1
+            const angle = Math.random() * Math.PI * 2; // Góc ngẫu nhiên quanh trục y
+            const radius = (1 - progress) * 8; // Bán kính giảm dần khi lên cao
+            const y = progress * layers * 2; // Chiều cao ngẫu nhiên từ gốc đến đỉnh
+            const x = radius * Math.cos(angle);
+            const z = radius * Math.sin(angle);
+
+            const randomColor = Math.floor(Math.random() * 0xffffff); // Chọn màu ngẫu nhiên
+            const starMaterial = new THREE.MeshPhongMaterial({ color: randomColor });
+            const star = new THREE.Mesh(geometry, starMaterial);
+            star.scale.set(0.6, 0.6, 0.6);
+            star.position.set(x, y, z);
+            spiralStarsGroup.add(star);
+        }
+        scene.add(spiralStarsGroup);
+
+        for (let layer = 0; layer < layers; layer++) {
+            const radius = 7 - layer * 0.4;
+            const y = layer * 2;
+            for (let i = 0; i < starsPerLayer; i++) {
+                const randomTilt = (Math.random() - 0.5) * 0.5; // Nghiêng ngẫu nhiên xung quanh trục
+                const randomTwist = (Math.random() - 0.5) * Math.PI * 2; // Xoay ngẫu nhiên xung quanh tâm
+                const angle = (i / starsPerLayer) * Math.PI * 2;
+                const x = radius * Math.cos(angle);
+                const z = radius * Math.sin(angle);
+                const star = new THREE.Mesh(geometry, materialGreen.clone());
+                star.rotation.set(randomTilt, randomTwist, randomTilt);
+                star.scale.set(0.5, 0.5, 0.5);
+                star.position.set(x, y, z);
+                starsGroup.add(star);
+            }
+        }
+        scene.add(starsGroup);
+
+        // Tạo quả cầu trang trí ngẫu nhiên
+        const sphereGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+        const redMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
+        const silverMaterial = new THREE.MeshPhongMaterial({ color: 0xc0c0c0 });
+        const ornamentsGroup = new THREE.Group();
+
+        for (let i = 0; i < 200; i++) {
+            const randomLayer = Math.random() * layers;
+            const randomRadius = 10 - randomLayer * 0.6 + Math.random();
+            const randomAngle = Math.random() * Math.PI * 2;
+            const x = randomRadius * Math.cos(randomAngle);
+            const y = randomLayer * 2;
+            const z = randomRadius * Math.sin(randomAngle);
+
+            const ornamentMaterial = Math.random() > 0.5 ? redMaterial : silverMaterial;
+            const ornament = new THREE.Mesh(sphereGeometry, ornamentMaterial);
+            ornament.position.set(x, y, z);
+            ornamentsGroup.add(ornament);
+        }
+        scene.add(ornamentsGroup);
+
+        // Tạo hiệu ứng tuyết rơi
+        const snowGroup = new THREE.Group();
+        const snowCount = 1000;
+
+        const snowGeometry = new THREE.SphereGeometry(0.1, 9, 9);
+        const snowMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+        for (let i = 0; i < snowCount; i++) {
+            const snowflake = new THREE.Mesh(snowGeometry, snowMaterial);
+            snowflake.position.set(
+                (Math.random() - 0.4) * 90,
+                Math.random() * 50,
+                (Math.random() - 0.4) * 90
+            );
+            snowflake.velocityY = Math.random() * 0.1 + 0.05; // Tốc độ rơi
+            snowGroup.add(snowflake);
+        }
+        scene.add(snowGroup);
+
+        // Thêm ánh sáng
+        const ambientLight = new THREE.AmbientLight(0x404040); // Ánh sáng môi trường
+        scene.add(ambientLight);
+
+        const pointLight = new THREE.PointLight(0xffffff, 1, 100); // Ánh sáng điểm mạnh hơn
+        pointLight.position.set(0, 30, 30);
+        scene.add(pointLight);
+
+        camera.position.set(0, layers, 40); // Điều chỉnh camera để hiển thị đỉnh cây rõ hơn
+
+        // Tạo đường bụi tiên sáng bay quanh cây
+        const dustParticles = [];
+        const dustGroup = new THREE.Group();
+        const dustCount = 1000; // Số lượng hạt bụi tiên
+        const dustGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+        const dustMaterial = new THREE.MeshBasicMaterial({ color: 0xffd700 }); // Màu vàng sáng
+
+        // Khởi tạo các hạt bụi tiên
+        for (let i = 0; i < dustCount; i++) {
+            const dustParticle = new THREE.Mesh(dustGeometry, dustMaterial);
+            dustParticle.position.set(0, 0, 0);
+            dustParticle.angle = Math.random() * Math.PI * 2; // Góc xoay ngẫu nhiên quanh trục Y
+            dustParticle.radius = Math.random() * 5 + 5; // Bán kính ngẫu nhiên
+            dustParticle.height = Math.random() * 30; // Chiều cao ngẫu nhiên
+            dustParticle.speed = Math.random() * 0.02 + 0.01; // Tốc độ di chuyển
+            dustParticles.push(dustParticle);
+            dustGroup.add(dustParticle);
+        }
+        scene.add(dustGroup);
+
+        // Hàm animate để làm cho bụi tiên bay
+        function animateFairyDust() {
+            dustParticles.forEach(particle => {
+                particle.angle += particle.speed; // Xoay quanh cây
+                particle.position.x = Math.cos(particle.angle) * particle.radius;
+                particle.position.z = Math.sin(particle.angle) * particle.radius;
+                particle.position.y -= 0.05; // Bay từ trên xuống
+
+                // Đặt lại vị trí nếu bụi tiên đi ra khỏi cây
+                if (particle.position.y < 0) {
+                    particle.position.y = particle.height; // Đặt lại chiều cao ban đầu
+                }
+            });
+        }
+
+        // Hàm animate để render cảnh
+        function animate() {
+            requestAnimationFrame(animate);
+            spiralStarsGroup
+            // Quay toàn bộ cây thông và các ngôi sao
+            spiralStarsGroup.rotation.y += 0.02; // Quay các ngôi sao bên trong
+            starsGroup.rotation.y += 0.01; // Quay các ngôi sao dưới cây quanh tâm
+            ornamentsGroup.rotation.y += 0.01; // Quay các quả cầu trang trí
+            topStar.rotation.y += 0.01; // Quay ngôi sao trên cùng
+
+            // Hiệu ứng tuyết rơi
+            snowGroup.children.forEach(snowflake => {
+                snowflake.position.y -= snowflake.velocityY;
+                if (snowflake.position.y < 0) {
+                    snowflake.position.y = 50; // Đặt lại vị trí tuyết rơi từ trên xuống
+                }
+            });
+
+            // Animate đường bụi tiên
+            animateFairyDust();
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Đảm bảo canvas điều chỉnh kích thước khi thay đổi kích thước cửa sổ
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+    <script>
+        // Tạo chữ "Merry Christmas"
+        const fontLoader = new THREE.FontLoader();
+        fontLoader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function (font) {
+            const textGeometry = new THREE.TextGeometry('Merry Christmas', {
+                font: font,
+                size: 6,
+                height: 0.5,
+                curveSegments: 12,
+                bevelEnabled: true,
+                bevelThickness: 0.1,
+                bevelSize: 0.1,
+                bevelSegments: 5
+            });
+
+            const textMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000, shininess: 100 });
+            const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+            textMesh.position.set(-30, 30, 0); // Start position
+            scene.add(textMesh);
+
+            // Animate the text
+            let waveTime = 0; // Time variable for wave animation
+
+            function animateText() {
+                waveTime += 0.05;
+
+                // Wave effect along the x and y axes
+                textMesh.position.x = -30 + Math.sin(waveTime) * 5; // Horizontal waving
+                textMesh.position.y = 30 - waveTime * 2; // Downward movement
+
+                // Rotate slightly for a waving effect
+                textMesh.rotation.z = Math.sin(waveTime * 0.5) * 0.1;
+
+                // Reset position when text moves out of view
+                if (textMesh.position.y < -10) {
+                    waveTime = 0; // Reset waveTime to restart animation
+                    textMesh.position.set(-30, 30, 0); // Reset position
+                }
+            }
+
+            // Update the animate function
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // Quay các nhóm
+                starsGroup.rotation.y += 0.01;
+                topStar.rotation.y += 0.01;
+
+                // Hiệu ứng tuyết rơi
+                snowGroup.children.forEach(snowflake => {
+                    snowflake.position.y -= snowflake.velocityY;
+                    if (snowflake.position.y < 0) {
+                        snowflake.position.y = 50; // Đặt lại vị trí tuyết rơi từ trên xuống
+                    }
+                });
+
+                // Animate the text
+                animateText();
+
+                renderer.render(scene, camera);
+            }
+            animate();
+        });
+
+    </script>
 <!-- =====================
      MUSIC
 ===================== -->
@@ -116,4 +357,5 @@
 </script>
 
 </body>
+
 </html>
