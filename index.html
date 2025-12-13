@@ -345,17 +345,15 @@
 </audio>
 
 <script>
-    const music = document.getElementById("bg-music");
-    music.volume = 0.4;
+    const playMusic = () => {
+    music.play().catch(e => console.log(e));
+};
 
-    // Browser bắt buộc có tương tác
-    document.addEventListener("pointerdown", () => {
-        music.play().catch(err => {
-            console.log("Autoplay blocked:", err);
-        });
-    }, { once: true });
+document.addEventListener("click", playMusic, { once: true });
+document.addEventListener("touchstart", playMusic, { once: true });
 </script>
 
 </body>
 
 </html>
+
